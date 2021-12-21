@@ -12,10 +12,7 @@ import gadgetinspector.data.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -38,7 +35,7 @@ public class GadgetChainDiscovery {
         this.config = config;
     }
 
-    public void discover() throws Exception {
+    public void discover(String jarName) throws Exception {
         Map<MethodReference.Handle, MethodReference> methodMap = DataLoader.loadMethods();
         InheritanceMap inheritanceMap = InheritanceMap.load();
         Map<MethodReference.Handle, Set<MethodReference.Handle>> methodImplMap = InheritanceDeriver.getAllMethodImplementations(
@@ -135,7 +132,13 @@ public class GadgetChainDiscovery {
             }
         }
 
-        LOGGER.info("Found {} gadget chains.", discoveredGadgets.size());
+        LOGGER.info("Found {} gadget chains in {}", discoveredGadgets.size(), jarName);
+        if (discoveredGadgets.size() >= 1) {
+            FileWriter fstream = new FileWriter("result.txt",true);
+            BufferedWriter out = new BufferedWriter(fstream);
+            out.write("Found " + discoveredGadgets.size() + "gadget chains in " + jarName + "\n");
+            out.close();
+        }
     }
 
     private static void printGadgetChain(Writer writer, GadgetChain chain) throws IOException {
@@ -328,6 +331,6 @@ public class GadgetChainDiscovery {
 
     public static void main(String[] args) throws Exception {
         GadgetChainDiscovery gadgetChainDiscovery = new GadgetChainDiscovery(new JavaDeserializationConfig());
-        gadgetChainDiscovery.discover();
+        gadgetChainDiscovery.discover(args[0]);
     }
 }

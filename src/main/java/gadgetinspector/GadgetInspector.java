@@ -121,7 +121,7 @@ public class GadgetInspector {
         {
             LOGGER.info("Searching call graph for gadget chains...");
             GadgetChainDiscovery gadgetChainDiscovery = new GadgetChainDiscovery(config);
-            gadgetChainDiscovery.discover();
+            gadgetChainDiscovery.discover(args[0]);
         }
 
         LOGGER.info("Analysis complete!");
